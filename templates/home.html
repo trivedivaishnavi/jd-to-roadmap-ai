@@ -1,16 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>JD to Roadmap AI</title>
-</head>
-<body>
-    <h1>Welcome to JD-to-Roadmap AI</h1>
-    <p>Paste a job description below to get started.</p>
+{% extends "base.html" %}
 
-    <form action="/analyze" method="POST">
-        <textarea name="jd_text" rows="10" cols="50" placeholder="Paste job description here..."></textarea>
-        <br><br>
-        <button type="submit">Analyze</button>
-    </form>
-</body>
-</html>
+{% block content %}
+<h1 class="mb-3">Welcome to JD-to-Roadmap AI</h1>
+<p class="text-muted">Paste a job description below to get started.</p>
+
+<form action="/analyze" method="POST">
+    <div class="mb-3">
+        <textarea name="jd_text" class="form-control" rows="10" placeholder="Paste job description here..."></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Analyze</button>
+</form>
+{% endblock %}
