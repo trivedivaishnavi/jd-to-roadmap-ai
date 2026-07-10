@@ -4,7 +4,7 @@
 
 <div class="card mb-3">
     <div class="card-body">
-        <h5 class="card-title">Skills Found</h5>
+        <h5 class="card-title">Skills Required (found in JD)</h5>
         {% if found_skills %}
         <ul class="list-group list-group-flush">
             {% for skill in found_skills %}
@@ -13,6 +13,21 @@
         </ul>
         {% else %}
         <p class="text-muted">No matching skills found from our list.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card mb-3 border-danger">
+    <div class="card-body">
+        <h5 class="card-title text-danger">Skills You're Missing</h5>
+        {% if missing_skills %}
+        <ul class="list-group list-group-flush">
+            {% for skill in missing_skills %}
+            <li class="list-group-item">{{ skill }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-success">You already know all the required skills — nice!</p>
         {% endif %}
     </div>
 </div>

@@ -32,13 +32,16 @@ def extract_skills(text):
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    return render_template('home.html', all_skills=COMMON_SKILLS)
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
     jd_text = request.form['jd_text']
+    known_skills = request.form.getlist('known_skills')
     found_skills = extract_skills(jd_text)
-    return render_template('result.html', jd_text=jd_text, found_skills=found_skills)
+    missing_skills = [skill for skill in found_skills if skill not in known_skills]
+    return render_template('result.html', jd_text=jd_text, found_skills=found_skills,
+                            known_skills=known_skills, missing_skills=missing_skills)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():

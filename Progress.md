@@ -8,3 +8,4 @@
 - Learned Jinja2 template inheritance ({% extends %}, {% block %}), created a base template with navbar, refactored home and result pages to use it. Fixed an issue where unsaved files were blocking Flask from reflecting changes.
 - Added user signup/login using Flask-SQLAlchemy (database) and Flask-Login (session management), with securely hashed passwords via Werkzeug. Fixed a template location issue (signup.html/login.html were outside the templates folder).
 - Built the core skill-extraction feature: a curated skills list (skills_data.py) and a matching function that scans pasted job descriptions for known tech skills, displayed on the result page.
+- Added skill-gap comparison: users can now check off skills they already know, and the app calculates which required skills (from the JD) are missing, shown in a separate highlighted card.
