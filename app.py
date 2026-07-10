@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from skills_data import COMMON_SKILLS
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'change-this-later-to-something-random'
@@ -21,6 +22,14 @@ class User(UserMixin, db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+def extract_skills(text):
+    text_lower = text.lower()
+    found_skills = []
+    for skill in COMMON_SKILLS:
+        if skill.lower() in text_lower:
+            found_skills.append(skill)
+    return found_skills
+
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -28,7 +37,8 @@ def home():
 @app.route('/analyze', methods=['POST'])
 def analyze():
     jd_text = request.form['jd_text']
-    return render_template('result.html', jd_text=jd_text)
+    found_skills = extract_skills(jd_text)
+    return render_template('result.html', jd_text=jd_text, found_skills=found_skills)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():

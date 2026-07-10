@@ -1,11 +1,28 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h1 class="mb-3">You submitted:</h1>
+<h1 class="mb-3">Analysis Result</h1>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">Skills Found</h5>
+        {% if found_skills %}
+        <ul class="list-group list-group-flush">
+            {% for skill in found_skills %}
+            <li class="list-group-item">{{ skill }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted">No matching skills found from our list.</p>
+        {% endif %}
+    </div>
+</div>
+
 <div class="card">
     <div class="card-body">
+        <h5 class="card-title">Original Job Description</h5>
         <p class="card-text">{{ jd_text }}</p>
     </div>
 </div>
+
 <a href="/" class="btn btn-secondary mt-3">Go back</a>
 {% endblock %}
