@@ -17,6 +17,19 @@
     </div>
 </div>
 
+{% if github_skills %}
+<div class="card mb-3 border-success">
+    <div class="card-body">
+        <h5 class="card-title text-success">Auto-Detected from Your GitHub</h5>
+        <ul class="list-group list-group-flush">
+            {% for skill in github_skills %}
+            <li class="list-group-item">{{ skill }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
 <div class="card mb-3 border-danger">
     <div class="card-body">
         <h5 class="card-title text-danger">Skills You're Missing</h5>

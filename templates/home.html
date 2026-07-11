@@ -8,6 +8,11 @@
         <textarea name="jd_text" class="form-control" rows="8" placeholder="Paste job description here..."></textarea>
     </div>
 
+    <div class="mb-3">
+        <label class="form-label fw-bold">Your GitHub username (optional, for auto skill detection)</label>
+        <input type="text" name="github_username" class="form-control" placeholder="e.g. trivedivaishnavi">
+    </div>
+
     <label class="form-label fw-bold">Which of these do you already know? (check all that apply)</label>
     <div class="row mb-3">
         {% for skill in all_skills %}

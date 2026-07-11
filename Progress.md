@@ -9,3 +9,4 @@
 - Added user signup/login using Flask-SQLAlchemy (database) and Flask-Login (session management), with securely hashed passwords via Werkzeug. Fixed a template location issue (signup.html/login.html were outside the templates folder).
 - Built the core skill-extraction feature: a curated skills list (skills_data.py) and a matching function that scans pasted job descriptions for known tech skills, displayed on the result page.
 - Added skill-gap comparison: users can now check off skills they already know, and the app calculates which required skills (from the JD) are missing, shown in a separate highlighted card.
+- Added GitHub API integration for automatic skill detection: users can enter their GitHub username, and the app fetches their public repos' languages to auto-detect known skills, shown in a dedicated card on the result page.
