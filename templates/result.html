@@ -4,11 +4,14 @@
 
 <div class="card mb-3">
     <div class="card-body">
-        <h5 class="card-title">Skills Required (found in JD)</h5>
+        <h5 class="card-title">Skills Required (across {{ num_jds }} job posting{{ 's' if num_jds != 1 else '' }})</h5>
         {% if found_skills %}
         <ul class="list-group list-group-flush">
             {% for skill in found_skills %}
-            <li class="list-group-item">{{ skill }}</li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ skill }}
+                <span class="badge bg-primary rounded-pill">{{ skill_frequency[skill] }}/{{ num_jds }}</span>
+            </li>
             {% endfor %}
         </ul>
         {% else %}
@@ -47,8 +50,13 @@
 
 <div class="card">
     <div class="card-body">
-        <h5 class="card-title">Original Job Description</h5>
-        <p class="card-text">{{ jd_text }}</p>
+        <h5 class="card-title">Original Job Descriptions</h5>
+        {% for jd in jd_texts %}
+            {% if jd.strip() %}
+            <p class="card-text"><strong>JD {{ loop.index }}:</strong> {{ jd }}</p>
+            <hr>
+            {% endif %}
+        {% endfor %}
     </div>
 </div>
 

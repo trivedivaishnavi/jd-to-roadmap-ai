@@ -33,6 +33,15 @@ def extract_skills(text):
         if skill.lower() in text_lower:
             found_skills.append(skill)
     return found_skills
+from collections import Counter
+
+def extract_skills_with_frequency(jd_texts):
+    skill_counter = Counter()
+    for text in jd_texts:
+        if text.strip():
+            found = extract_skills(text)
+            skill_counter.update(found)
+    return skill_counter
 
 
 LANGUAGE_TO_SKILL = {
@@ -67,23 +76,32 @@ def home():
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
-    jd_text = request.form['jd_text']
+    jd_texts = [
+        request.form.get('jd_text_1', ''),
+        request.form.get('jd_text_2', ''),
+        request.form.get('jd_text_3', '')
+    ]
     github_username = request.form.get('github_username', '').strip()
     manual_known = request.form.getlist('known_skills')
 
     github_skills = get_github_skills(github_username) if github_username else []
     known_skills = list(set(manual_known + github_skills))
 
-    found_skills = extract_skills(jd_text)
+    skill_frequency = extract_skills_with_frequency(jd_texts)
+    found_skills = list(skill_frequency.keys())
     missing_skills = [skill for skill in found_skills if skill not in known_skills]
+
+    num_jds = len([t for t in jd_texts if t.strip()])
 
     return render_template(
         'result.html',
-        jd_text=jd_text,
+        jd_texts=jd_texts,
+        skill_frequency=skill_frequency,
         found_skills=found_skills,
         known_skills=known_skills,
         missing_skills=missing_skills,
-        github_skills=github_skills
+        github_skills=github_skills,
+        num_jds=num_jds
     )
 
 
