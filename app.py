@@ -1,9 +1,15 @@
+import os
+from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import requests
+from collections import Counter
+from huggingface_hub import InferenceClient
 from skills_data import COMMON_SKILLS
+
+load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'change-this-later-to-something-random'
@@ -13,6 +19,8 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+hf_client = InferenceClient(token=os.environ.get("HF_TOKEN"))
 
 
 class User(UserMixin, db.Model):
@@ -33,7 +41,7 @@ def extract_skills(text):
         if skill.lower() in text_lower:
             found_skills.append(skill)
     return found_skills
-from collections import Counter
+
 
 def extract_skills_with_frequency(jd_texts):
     skill_counter = Counter()
@@ -69,6 +77,25 @@ def get_github_skills(username):
     return list(detected)
 
 
+def generate_roadmap(missing_skills, weeks_available=6):
+    if not missing_skills:
+        return "You already know all the required skills — no roadmap needed!"
+
+    skills_text = ", ".join(missing_skills)
+    prompt = f"""Create a simple {weeks_available}-week learning roadmap for a beginner to learn these skills: {skills_text}.
+Format it as a numbered list, one line per week, mentioning which skill(s) to focus on that week. Keep it concise."""
+
+    try:
+        response = hf_client.chat_completion(
+            messages=[{"role": "user", "content": prompt}],
+            model="meta-llama/Llama-3.1-8B-Instruct",
+            max_tokens=400
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"Roadmap generation is temporarily unavailable ({e}). Here are the skills to focus on in order: {skills_text}"
+
+
 @app.route('/')
 def home():
     return render_template('home.html', all_skills=COMMON_SKILLS)
@@ -93,6 +120,8 @@ def analyze():
 
     num_jds = len([t for t in jd_texts if t.strip()])
 
+    roadmap = generate_roadmap(missing_skills)
+
     return render_template(
         'result.html',
         jd_texts=jd_texts,
@@ -101,7 +130,8 @@ def analyze():
         known_skills=known_skills,
         missing_skills=missing_skills,
         github_skills=github_skills,
-        num_jds=num_jds
+        num_jds=num_jds,
+        roadmap=roadmap
     )
 
 
