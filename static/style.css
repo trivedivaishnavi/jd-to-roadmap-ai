@@ -26,6 +26,7 @@ body {
     font-weight: 700;
     font-size: 1.4rem;
     background: linear-gradient(90deg, #6366f1, #a855f7);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
@@ -70,6 +71,7 @@ body {
 .badge.bg-primary {
     background: linear-gradient(90deg, #6366f1, #a855f7) !important;
 }
+
 .text-muted {
     color: #94a3b8 !important;
 }
