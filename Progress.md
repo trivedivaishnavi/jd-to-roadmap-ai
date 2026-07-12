@@ -40,3 +40,7 @@ This was the hardest part so far. Wanted the app to actually generate a personal
 
 ## General notes on debugging this whole project
 A recurring theme: most of my errors weren't really about the "hard" concepts — they were things like unsaved files, wrong folder locations, or a server that quietly stopped running. Learning to actually read error messages in the terminal (instead of panicking) and checking the obvious stuff first (is it saved? is the server running? is the file in the right folder?) probably taught me as much as the actual features did.
+
+Decided the app looked way too plain/default-bootstrap, so spent today making it actually look good. Made a custom CSS file with a dark theme, a nicer font (Poppins from Google Fonts), gradient colors on the logo and buttons, and added icons instead of plain text links. Also added little hover effects on the cards so they lift up a bit when you hover — small thing but makes it feel more "real."
+
+Ran into an issue where some of the text (like the subtitle and form labels) was basically invisible — turns out Bootstrap's "muted" text color is made for light backgrounds, so on my new dark background it just disappeared. Had to manually override those colors.

@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+:root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --success: #10b981;
+    --danger: #ef4444;
+    --bg-dark: #0f172a;
+    --card-bg: #1e293b;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #e2e8f0;
+    min-height: 100vh;
+}
+
+.navbar {
+    background: rgba(15, 23, 42, 0.9) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.4rem;
+    background: linear-gradient(90deg, #6366f1, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.card {
+    background: var(--card-bg) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 16px !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    color: #e2e8f0 !important;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+}
+
+.form-control, .form-check-input {
+    background-color: #0f172a !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    color: #e2e8f0 !important;
+}
+
+.form-control:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25) !important;
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, #6366f1, #a855f7) !important;
+    border: none !important;
+    border-radius: 10px !important;
+    font-weight: 600;
+    padding: 0.6rem 1.5rem !important;
+    transition: transform 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: scale(1.03);
+}
+
+.badge.bg-primary {
+    background: linear-gradient(90deg, #6366f1, #a855f7) !important;
+}
+.text-muted {
+    color: #94a3b8 !important;
+}
+
+label, .form-label, .form-check-label {
+    color: #cbd5e1 !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #f1f5f9;
+}
+
+p, .card-text {
+    color: #cbd5e1;
+}
