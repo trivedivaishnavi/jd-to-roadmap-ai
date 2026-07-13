@@ -51,7 +51,7 @@
 <div class="card mb-3 border-primary">
     <div class="card-body">
         <h5 class="card-title text-primary">Your Personalized Learning Roadmap</h5>
-        <p class="card-text" style="white-space: pre-line;">{{ roadmap }}</p>
+        <div class="card-text">{{ roadmap | safe }}</div>
     </div>
 </div>
 

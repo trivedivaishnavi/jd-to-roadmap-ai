@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="mb-3">Your Analysis History</h1>
+{% if analyses %}
+    {% for item in analyses %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h6 class="text-muted">{{ item.created_at.strftime('%b %d, %Y %I:%M %p') }}</h6>
+            <p><strong>JD Summary:</strong> {{ item.jd_summary }}</p>
+            <p><strong>Missing Skills:</strong> {{ item.missing_skills }}</p>
+            <details>
+                <summary>View Roadmap</summary>
+                <div>{{ item.roadmap | safe }}</div>
+            </details>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <p class="text-muted">No analyses yet — go analyze a job description first!</p>
+{% endif %}
+<a href="/" class="btn btn-secondary">Back to Home</a>
+{% endblock %}

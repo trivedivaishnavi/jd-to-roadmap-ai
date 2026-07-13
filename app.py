@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import requests
 from collections import Counter
 from huggingface_hub import InferenceClient
+import markdown
 from skills_data import COMMON_SKILLS
 
 load_dotenv()
@@ -27,6 +28,15 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
+
+
+class Analysis(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    jd_summary = db.Column(db.String(300))
+    missing_skills = db.Column(db.String(500))
+    roadmap = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
 
 
 @login_manager.user_loader
@@ -79,17 +89,27 @@ def get_github_skills(username):
 
 def generate_roadmap(missing_skills, weeks_available=6):
     if not missing_skills:
-        return "You already know all the required skills — no roadmap needed!"
+        return "You already know all the required skills — no roadmap needed! Focus on polishing your GitHub projects and LinkedIn profile instead."
 
     skills_text = ", ".join(missing_skills)
-    prompt = f"""Create a simple {weeks_available}-week learning roadmap for a beginner to learn these skills: {skills_text}.
-Format it as a numbered list, one line per week, mentioning which skill(s) to focus on that week. Keep it concise."""
+    prompt = f"""A student is preparing for a job that requires these skills they don't yet have: {skills_text}.
+Create a detailed {weeks_available}-week learning roadmap for them. For each week, include:
+- Which specific skill(s) to focus on
+- 2-3 concrete sub-topics to cover that week
+- A suggestion of where to learn it (type of resource, e.g. official docs, a course, practice platform)
+
+After the week-by-week plan, add a short section called "Personalized Recommendations" with:
+- One specific tip to improve their LinkedIn profile for this type of role
+- One specific tip to improve their GitHub profile for this type of role
+- One piece of general advice for someone at this stage
+
+Keep the tone encouraging and practical. Use clear headers and numbered lists."""
 
     try:
         response = hf_client.chat_completion(
             messages=[{"role": "user", "content": prompt}],
             model="meta-llama/Llama-3.1-8B-Instruct",
-            max_tokens=400
+            max_tokens=2000
         )
         return response.choices[0].message.content
     except Exception as e:
@@ -121,6 +141,17 @@ def analyze():
     num_jds = len([t for t in jd_texts if t.strip()])
 
     roadmap = generate_roadmap(missing_skills)
+    roadmap_html = markdown.markdown(roadmap)
+
+    if current_user.is_authenticated:
+        new_analysis = Analysis(
+            user_id=current_user.id,
+            jd_summary=jd_texts[0][:200] if jd_texts[0] else "No JD provided",
+            missing_skills=", ".join(missing_skills),
+            roadmap=roadmap
+        )
+        db.session.add(new_analysis)
+        db.session.commit()
 
     return render_template(
         'result.html',
@@ -131,8 +162,15 @@ def analyze():
         missing_skills=missing_skills,
         github_skills=github_skills,
         num_jds=num_jds,
-        roadmap=roadmap
+        roadmap=roadmap_html
     )
+
+
+@app.route('/history')
+@login_required
+def history():
+    analyses = Analysis.query.filter_by(user_id=current_user.id).order_by(Analysis.created_at.desc()).all()
+    return render_template('history.html', analyses=analyses)
 
 
 @app.route('/signup', methods=['GET', 'POST'])
