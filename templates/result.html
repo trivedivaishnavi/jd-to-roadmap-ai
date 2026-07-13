@@ -32,6 +32,18 @@
     </div>
 </div>
 {% endif %}
+{% if resume_skills %}
+<div class="card mb-3 border-info">
+    <div class="card-body">
+        <h5 class="card-title text-info">Detected from Your Resume</h5>
+        <ul class="list-group list-group-flush">
+            {% for skill in resume_skills %}
+            <li class="list-group-item">{{ skill }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
 
 <div class="card mb-3 border-danger">
     <div class="card-body">

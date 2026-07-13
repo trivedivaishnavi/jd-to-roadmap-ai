@@ -8,6 +8,7 @@ import requests
 from collections import Counter
 from huggingface_hub import InferenceClient
 import markdown
+import pdfplumber
 from skills_data import COMMON_SKILLS
 
 load_dotenv()
@@ -87,6 +88,20 @@ def get_github_skills(username):
     return list(detected)
 
 
+def extract_skills_from_resume(file):
+    try:
+        with pdfplumber.open(file) as pdf:
+            text = ""
+            for page in pdf.pages:
+                page_text = page.extract_text()
+                if page_text:
+                    text += page_text
+        return extract_skills(text)
+    except Exception as e:
+        print(f"Resume parsing error: {e}")
+        return []
+
+
 def generate_roadmap(missing_skills, weeks_available=6):
     if not missing_skills:
         return "You already know all the required skills — no roadmap needed! Focus on polishing your GitHub projects and LinkedIn profile instead."
@@ -131,8 +146,11 @@ def analyze():
     github_username = request.form.get('github_username', '').strip()
     manual_known = request.form.getlist('known_skills')
 
+    resume_file = request.files.get('resume_file')
+    resume_skills = extract_skills_from_resume(resume_file) if resume_file and resume_file.filename else []
+
     github_skills = get_github_skills(github_username) if github_username else []
-    known_skills = list(set(manual_known + github_skills))
+    known_skills = list(set(manual_known + github_skills + resume_skills))
 
     skill_frequency = extract_skills_with_frequency(jd_texts)
     found_skills = list(skill_frequency.keys())
@@ -161,6 +179,7 @@ def analyze():
         known_skills=known_skills,
         missing_skills=missing_skills,
         github_skills=github_skills,
+        resume_skills=resume_skills,
         num_jds=num_jds,
         roadmap=roadmap_html
     )
