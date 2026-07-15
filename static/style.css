@@ -87,3 +87,55 @@ h1, h2, h3, h4, h5, h6 {
 p, .card-text {
     color: #cbd5e1;
 }
+.hero {
+    text-align: center;
+    padding: 2rem 1rem 3rem;
+}
+
+.hero h1 {
+    font-weight: 700;
+    font-size: 2.8rem;
+    background: linear-gradient(90deg, #6366f1, #a855f7);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+.hero-icon {
+    font-size: 3rem;
+    background: linear-gradient(90deg, #6366f1, #a855f7);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+}
+
+.match-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    background: conic-gradient(#10b981 calc(var(--pct) * 1%), #334155 0);
+    position: relative;
+}
+
+.match-circle::before {
+    content: "";
+    position: absolute;
+    width: 108px;
+    height: 108px;
+    border-radius: 50%;
+    background: #1e293b;
+}
+
+.match-circle span {
+    position: relative;
+    z-index: 1;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #f1f5f9;
+}

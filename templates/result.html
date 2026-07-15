@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-<h1 class="mb-3">Analysis Result</h1>
+<div class="text-center mb-4">
+    <div class="match-circle" style="--pct: {{ match_percentage }}">
+        <span>{{ match_percentage }}%</span>
+    </div>
+    <h1>Your Skill Match</h1>
+</div>
 
 <div class="card mb-3">
     <div class="card-body">

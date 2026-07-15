@@ -155,6 +155,7 @@ def analyze():
     skill_frequency = extract_skills_with_frequency(jd_texts)
     found_skills = list(skill_frequency.keys())
     missing_skills = [skill for skill in found_skills if skill not in known_skills]
+    match_percentage = round((len(found_skills) - len(missing_skills)) / len(found_skills) * 100) if found_skills else 100
 
     num_jds = len([t for t in jd_texts if t.strip()])
 
@@ -181,7 +182,8 @@ def analyze():
         github_skills=github_skills,
         resume_skills=resume_skills,
         num_jds=num_jds,
-        roadmap=roadmap_html
+        roadmap=roadmap_html,
+        match_percentage=match_percentage
     )
 
 
