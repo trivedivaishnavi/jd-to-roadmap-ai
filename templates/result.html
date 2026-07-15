@@ -24,6 +24,44 @@
         {% endif %}
     </div>
 </div>
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">Skill Frequency Chart</h5>
+        <canvas id="skillChart"></canvas>
+    </div>
+</div>
+
+<script>
+const ctx = document.getElementById('skillChart');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [{% for skill in found_skills %}"{{ skill }}",{% endfor %}],
+        datasets: [{
+            label: 'Appears in # of job postings',
+            data: [{% for skill in found_skills %}{{ skill_frequency[skill] }},{% endfor %}],
+            backgroundColor: 'rgba(99, 102, 241, 0.7)',
+            borderRadius: 6
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: { color: '#cbd5e1', stepSize: 1 },
+                grid: { color: 'rgba(255,255,255,0.05)' }
+            },
+            x: {
+                ticks: { color: '#cbd5e1' },
+                grid: { display: false }
+            }
+        },
+        plugins: {
+            legend: { labels: { color: '#e2e8f0' } }
+        }
+    }
+});
+</script>
 
 {% if github_skills %}
 <div class="card mb-3 border-success">
