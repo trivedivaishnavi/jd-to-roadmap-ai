@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
+
 <div class="text-center mb-4">
     <div class="match-circle" style="--pct: {{ match_percentage }}">
-        <span>{{ match_percentage }}%</span>
+        <span id="matchNumber">0%</span>
     </div>
     <h1>Your Skill Match</h1>
 </div>
@@ -24,44 +25,13 @@
         {% endif %}
     </div>
 </div>
+
 <div class="card mb-3">
     <div class="card-body">
         <h5 class="card-title">Skill Frequency Chart</h5>
         <canvas id="skillChart"></canvas>
     </div>
 </div>
-
-<script>
-const ctx = document.getElementById('skillChart');
-new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: [{% for skill in found_skills %}"{{ skill }}",{% endfor %}],
-        datasets: [{
-            label: 'Appears in # of job postings',
-            data: [{% for skill in found_skills %}{{ skill_frequency[skill] }},{% endfor %}],
-            backgroundColor: 'rgba(99, 102, 241, 0.7)',
-            borderRadius: 6
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: { color: '#cbd5e1', stepSize: 1 },
-                grid: { color: 'rgba(255,255,255,0.05)' }
-            },
-            x: {
-                ticks: { color: '#cbd5e1' },
-                grid: { display: false }
-            }
-        },
-        plugins: {
-            legend: { labels: { color: '#e2e8f0' } }
-        }
-    }
-});
-</script>
 
 {% if github_skills %}
 <div class="card mb-3 border-success">
@@ -75,6 +45,7 @@ new Chart(ctx, {
     </div>
 </div>
 {% endif %}
+
 {% if resume_skills %}
 <div class="card mb-3 border-info">
     <div class="card-body">
@@ -123,4 +94,45 @@ new Chart(ctx, {
 </div>
 
 <a href="/" class="btn btn-secondary mt-3">Go back</a>
+
+<script>
+    let current = 0;
+    const target = {{ match_percentage }};
+    const el = document.getElementById('matchNumber');
+    const counter = setInterval(() => {
+        current += 1;
+        el.textContent = current + "%";
+        if (current >= target) clearInterval(counter);
+    }, 15);
+
+    const ctx = document.getElementById('skillChart');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [{% for skill in found_skills %}"{{ skill }}",{% endfor %}],
+            datasets: [{
+                label: 'Appears in # of job postings',
+                data: [{% for skill in found_skills %}{{ skill_frequency[skill] }},{% endfor %}],
+                backgroundColor: 'rgba(99, 102, 241, 0.7)',
+                borderRadius: 6
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { color: '#cbd5e1', stepSize: 1 },
+                    grid: { color: 'rgba(255,255,255,0.05)' }
+                },
+                x: {
+                    ticks: { color: '#cbd5e1' },
+                    grid: { display: false }
+                }
+            },
+            plugins: {
+                legend: { labels: { color: '#e2e8f0' } }
+            }
+        }
+    });
+</script>
 {% endblock %}
