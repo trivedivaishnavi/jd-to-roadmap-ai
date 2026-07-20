@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="mb-3">Resume Tailoring Results</h1>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">Keywords in the Job Posting</h5>
+        <ul class="list-group list-group-flush">
+            {% for skill in jd_skills %}
+            <li class="list-group-item">{{ skill }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<div class="card mb-3 border-success">
+    <div class="card-body">
+        <h5 class="card-title text-success">Already in Your Resume</h5>
+        {% if resume_skills %}
+        <ul class="list-group list-group-flush">
+            {% for skill in resume_skills %}
+            <li class="list-group-item">{{ skill }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted">No matching skills detected in your resume text.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card mb-3 border-danger">
+    <div class="card-body">
+        <h5 class="card-title text-danger">Missing Keywords</h5>
+        {% if missing_keywords %}
+        <ul class="list-group list-group-flush">
+            {% for skill in missing_keywords %}
+            <li class="list-group-item">{{ skill }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-success">Your resume already covers everything — nice!</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card mb-3 border-primary">
+    <div class="card-body">
+        <h5 class="card-title text-primary">Suggestions to Improve Your Match</h5>
+        <div class="card-text">{{ suggestions | safe }}</div>
+    </div>
+</div>
+
+<a href="/tailor-resume" class="btn btn-secondary mt-3">Try Another</a>
+{% endblock %}

@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -88,7 +88,7 @@ def get_github_skills(username):
     return list(detected)
 
 
-def extract_skills_from_resume(file):
+def get_pdf_text(file):
     try:
         with pdfplumber.open(file) as pdf:
             text = ""
@@ -96,10 +96,15 @@ def extract_skills_from_resume(file):
                 page_text = page.extract_text()
                 if page_text:
                     text += page_text
-        return extract_skills(text)
+        return text
     except Exception as e:
         print(f"Resume parsing error: {e}")
-        return []
+        return ""
+
+
+def extract_skills_from_resume(file):
+    text = get_pdf_text(file)
+    return extract_skills(text) if text else []
 
 
 def generate_roadmap(missing_skills, weeks_available=6):
@@ -129,6 +134,31 @@ Keep the tone encouraging and practical. Use clear headers and numbered lists.""
         return response.choices[0].message.content
     except Exception as e:
         return f"Roadmap generation is temporarily unavailable ({e}). Here are the skills to focus on in order: {skills_text}"
+
+
+def generate_resume_suggestions(missing_keywords, resume_text):
+    if not missing_keywords:
+        return "Your resume already covers all the key terms from this job description — nice!"
+
+    keywords_text = ", ".join(missing_keywords)
+    prompt = f"""Here is a student's resume text:
+{resume_text[:2000]}
+
+The job description they're applying to mentions these keywords/skills that are missing from their resume: {keywords_text}.
+
+Give honest, practical suggestions for how they could naturally incorporate these missing keywords into their resume. If they seem to have relevant experience already (based on the resume text), suggest how to rephrase existing bullet points to include the terminology. Do NOT invent experience they don't have. If a skill seems genuinely absent from their background, say so honestly and suggest they either learn it first or avoid claiming it.
+
+Format as a numbered list, one suggestion per missing keyword or group of related keywords. Keep it concise and actionable."""
+
+    try:
+        response = hf_client.chat_completion(
+            messages=[{"role": "user", "content": prompt}],
+            model="meta-llama/Llama-3.1-8B-Instruct",
+            max_tokens=1200
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"Suggestions temporarily unavailable ({e}). Missing keywords to consider adding: {keywords_text}"
 
 
 @app.route('/')
@@ -185,6 +215,27 @@ def analyze():
         roadmap=roadmap_html,
         match_percentage=match_percentage
     )
+
+
+@app.route('/tailor-resume', methods=['GET', 'POST'])
+def tailor_resume():
+    if request.method == 'POST':
+        jd_text = request.form.get('jd_text', '')
+        resume_file = request.files.get('resume_file')
+        resume_text = get_pdf_text(resume_file) if resume_file and resume_file.filename else ""
+        resume_skills = extract_skills(resume_text) if resume_text else []
+        jd_skills = extract_skills(jd_text)
+        missing_keywords = [s for s in jd_skills if s not in resume_skills]
+        suggestions = generate_resume_suggestions(missing_keywords, resume_text)
+        suggestions_html = markdown.markdown(suggestions)
+        return render_template(
+            'tailor_result.html',
+            jd_skills=jd_skills,
+            resume_skills=resume_skills,
+            missing_keywords=missing_keywords,
+            suggestions=suggestions_html
+        )
+    return render_template('tailor_resume.html')
 
 
 @app.route('/history')
