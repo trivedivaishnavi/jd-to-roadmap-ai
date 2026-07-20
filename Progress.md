@@ -56,3 +56,4 @@ Spent way too long today wondering why my bar chart just wasn't showing up — n
 Added a little search box above the skill checkboxes so you can type and filter instead of scrolling through all of them — small thing but makes the form way less annoying to fill out.
 Made the match percentage count up from 0 instead of just appearing, just an animation but it makes the result page feel less static.
 Today's feature: paste a JD and upload your resume, and it shows you exactly which keywords are missing plus honest suggestions on how to work them in, without lying about experience I don't have. Felt good reusing the pdf reading and skill matching from earlier — like the work actually paid off. 
+Switched the whole color scheme from purple/indigo to a dark pink/magenta look instead — felt like a good vibe change. Also threw in some soft glowing blob shapes in the background using radial gradients, just CSS, no actual images, which was a fun little trick to figure out.

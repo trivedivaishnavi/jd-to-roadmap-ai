@@ -1,62 +1,115 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
 :root {
-    --primary: #6366f1;
-    --primary-dark: #4f46e5;
+    --primary: #ec4899;
+    --primary-dark: #db2777;
+    --accent: #f472b6;
     --success: #10b981;
     --danger: #ef4444;
-    --bg-dark: #0f172a;
-    --card-bg: #1e293b;
+    --bg-dark: #1a0f1a;
+    --card-bg: #2a1625;
 }
 
 body {
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    color: #e2e8f0;
+    background: linear-gradient(135deg, #1a0f1a 0%, #2a1625 50%, #1f1425 100%);
+    color: #f3e8f0;
     min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: -10%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(236,72,153,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    bottom: -15%;
+    left: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(219,39,119,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: -1;
+    pointer-events: none;
 }
 
 .navbar {
-    background: rgba(15, 23, 42, 0.9) !important;
+    background: rgba(26, 15, 26, 0.9) !important;
     backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(236, 72, 153, 0.15);
 }
 
 .navbar-brand {
     font-weight: 700;
     font-size: 1.4rem;
-    background: linear-gradient(90deg, #6366f1, #a855f7);
+    background: linear-gradient(90deg, #ec4899, #f472b6);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
+.hero {
+    text-align: center;
+    padding: 2rem 1rem 3rem;
+}
+
+.hero h1 {
+    font-weight: 700;
+    font-size: 2.8rem;
+    background: linear-gradient(90deg, #ec4899, #f472b6);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+.hero-icon {
+    font-size: 3rem;
+    background: linear-gradient(90deg, #ec4899, #f472b6);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+}
+
 .card {
     background: var(--card-bg) !important;
-    border: 1px solid rgba(255,255,255,0.08) !important;
+    border: 1px solid rgba(236, 72, 153, 0.1) !important;
     border-radius: 16px !important;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    color: #e2e8f0 !important;
+    color: #f3e8f0 !important;
 }
 
 .card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+    box-shadow: 0 10px 30px rgba(236, 72, 153, 0.25);
 }
 
 .form-control, .form-check-input {
-    background-color: #0f172a !important;
-    border: 1px solid rgba(255,255,255,0.15) !important;
-    color: #e2e8f0 !important;
+    background-color: #1a0f1a !important;
+    border: 1px solid rgba(236, 72, 153, 0.2) !important;
+    color: #f3e8f0 !important;
 }
 
 .form-control:focus {
     border-color: var(--primary) !important;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25) !important;
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.25) !important;
 }
 
 .btn-primary {
-    background: linear-gradient(90deg, #6366f1, #a855f7) !important;
+    background: linear-gradient(90deg, #ec4899, #db2777) !important;
     border: none !important;
     border-radius: 10px !important;
     font-weight: 600;
@@ -66,49 +119,27 @@ body {
 
 .btn-primary:hover {
     transform: scale(1.03);
+    box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4);
 }
 
 .badge.bg-primary {
-    background: linear-gradient(90deg, #6366f1, #a855f7) !important;
+    background: linear-gradient(90deg, #ec4899, #f472b6) !important;
 }
 
 .text-muted {
-    color: #94a3b8 !important;
+    color: #c9a8bd !important;
 }
 
 label, .form-label, .form-check-label {
-    color: #cbd5e1 !important;
+    color: #e5c2d8 !important;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    color: #f1f5f9;
+    color: #fdf2f8;
 }
 
 p, .card-text {
-    color: #cbd5e1;
-}
-.hero {
-    text-align: center;
-    padding: 2rem 1rem 3rem;
-}
-
-.hero h1 {
-    font-weight: 700;
-    font-size: 2.8rem;
-    background: linear-gradient(90deg, #6366f1, #a855f7);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 0.5rem;
-}
-
-.hero-icon {
-    font-size: 3rem;
-    background: linear-gradient(90deg, #6366f1, #a855f7);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 1rem;
+    color: #e5c2d8;
 }
 
 .match-circle {
@@ -119,7 +150,7 @@ p, .card-text {
     align-items: center;
     justify-content: center;
     margin: 0 auto 1.5rem;
-    background: conic-gradient(#10b981 calc(var(--pct) * 1%), #334155 0);
+    background: conic-gradient(#ec4899 calc(var(--pct) * 1%), #3d2436 0);
     position: relative;
 }
 
@@ -129,7 +160,7 @@ p, .card-text {
     width: 108px;
     height: 108px;
     border-radius: 50%;
-    background: #1e293b;
+    background: #2a1625;
 }
 
 .match-circle span {
@@ -137,5 +168,10 @@ p, .card-text {
     z-index: 1;
     font-size: 2rem;
     font-weight: 700;
-    color: #f1f5f9;
+    color: #fdf2f8;
 }
+
+.border-success { border-color: #10b981 !important; }
+.border-danger { border-color: #ef4444 !important; }
+.border-primary { border-color: #ec4899 !important; }
+.border-info { border-color: #f472b6 !important; }
