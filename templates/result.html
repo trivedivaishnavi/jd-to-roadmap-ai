@@ -29,7 +29,9 @@
 <div class="card mb-3">
     <div class="card-body">
         <h5 class="card-title">Skill Frequency Chart</h5>
-        <canvas id="skillChart"></canvas>
+        <div style="position: relative; height: 400px;">
+            <canvas id="skillChart"></canvas>
+        </div>
     </div>
 </div>
 
@@ -105,34 +107,41 @@
         if (current >= target) clearInterval(counter);
     }, 15);
 
-    const ctx = document.getElementById('skillChart');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: [{% for skill in found_skills %}"{{ skill }}",{% endfor %}],
-            datasets: [{
-                label: 'Appears in # of job postings',
-                data: [{% for skill in found_skills %}{{ skill_frequency[skill] }},{% endfor %}],
-                backgroundColor: 'rgba(99, 102, 241, 0.7)',
-                borderRadius: 6
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { color: '#cbd5e1', stepSize: 1 },
-                    grid: { color: 'rgba(255,255,255,0.05)' }
-                },
-                x: {
-                    ticks: { color: '#cbd5e1' },
-                    grid: { display: false }
-                }
+const ctx = document.getElementById('skillChart');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [{% for skill in found_skills %}"{{ skill }}",{% endfor %}],
+        datasets: [{
+            label: 'Job postings mentioning this skill',
+            data: [{% for skill in found_skills %}{{ skill_frequency[skill] }},{% endfor %}],
+            backgroundColor: 'rgba(236, 72, 153, 0.75)',
+            hoverBackgroundColor: 'rgba(244, 114, 182, 0.9)',
+            borderRadius: 8,
+            maxBarThickness: 28
+        }]
+    },
+    options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                beginAtZero: true,
+                ticks: { color: '#e5c2d8', stepSize: 1, font: { family: 'Poppins' } },
+                grid: { color: 'rgba(236, 72, 153, 0.08)' }
             },
-            plugins: {
-                legend: { labels: { color: '#e2e8f0' } }
+            y: {
+                ticks: { color: '#e5c2d8', font: { family: 'Poppins', size: 12 } },
+                grid: { display: false }
+            }
+        },
+        plugins: {
+            legend: {
+                labels: { color: '#fdf2f8', font: { family: 'Poppins' } }
             }
         }
-    });
+    }
+});
 </script>
 {% endblock %}
