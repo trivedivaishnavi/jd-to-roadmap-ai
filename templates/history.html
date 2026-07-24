@@ -8,10 +8,26 @@
             <h6 class="text-muted">{{ item.created_at.strftime('%b %d, %Y %I:%M %p') }}</h6>
             <p><strong>JD Summary:</strong> {{ item.jd_summary }}</p>
             <p><strong>Missing Skills:</strong> {{ item.missing_skills }}</p>
+            {% if item.tasks %}
+            <div class="mt-2">
+                {% for task in item.tasks %}
+                <div class="form-check mb-2">
+                    <input class="form-check-input task-checkbox" type="checkbox"
+                           data-task-id="{{ task.id }}" {% if task.completed %}checked{% endif %}
+                           id="task{{ task.id }}">
+                    <label class="form-check-label" for="task{{ task.id }}">
+                        <strong>{{ task.week_label }}</strong>
+                    </label>
+                    <div class="ms-4 small">{{ task.content | safe }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
             <details>
                 <summary>View Roadmap</summary>
                 <div>{{ item.roadmap | safe }}</div>
             </details>
+            {% endif %}
         </div>
     </div>
     {% endfor %}
@@ -19,4 +35,15 @@
     <p class="text-muted">No analyses yet — go analyze a job description first!</p>
 {% endif %}
 <a href="/" class="btn btn-secondary">Back to Home</a>
+
+<script>
+document.querySelectorAll('.task-checkbox').forEach(box => {
+    box.addEventListener('change', function() {
+        const taskId = this.dataset.taskId;
+        fetch(`/toggle-task/${taskId}`, { method: 'POST' })
+            .then(res => res.json())
+            .then(data => console.log('Task updated:', data));
+    });
+});
+</script>
 {% endblock %}

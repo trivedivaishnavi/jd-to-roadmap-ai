@@ -1,4 +1,5 @@
 import os
+import re
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -38,6 +39,15 @@ class Analysis(db.Model):
     missing_skills = db.Column(db.String(500))
     roadmap = db.Column(db.Text)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
+    tasks = db.relationship('RoadmapTask', backref='analysis', lazy=True)
+
+
+class RoadmapTask(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    analysis_id = db.Column(db.Integer, db.ForeignKey('analysis.id'), nullable=False)
+    week_label = db.Column(db.String(50))
+    content = db.Column(db.Text)
+    completed = db.Column(db.Boolean, default=False)
 
 
 @login_manager.user_loader
@@ -105,6 +115,18 @@ def get_pdf_text(file):
 def extract_skills_from_resume(file):
     text = get_pdf_text(file)
     return extract_skills(text) if text else []
+
+
+def split_roadmap_into_weeks(roadmap_text):
+    if "Personalized Recommendations" in roadmap_text:
+        main_part, recs_part = roadmap_text.split("Personalized Recommendations", 1)
+        recs_part = "Personalized Recommendations" + recs_part
+    else:
+        main_part, recs_part = roadmap_text, ""
+
+    chunks = re.split(r'(?=Week\s*\d+)', main_part)
+    weeks = [chunk.strip() for chunk in chunks if chunk.strip()]
+    return weeks, recs_part.strip()
 
 
 def generate_roadmap(missing_skills, weeks_available=6):
@@ -192,6 +214,8 @@ def analyze():
     roadmap = generate_roadmap(missing_skills)
     roadmap_html = markdown.markdown(roadmap)
 
+    weeks, recommendations = split_roadmap_into_weeks(roadmap)
+
     if current_user.is_authenticated:
         new_analysis = Analysis(
             user_id=current_user.id,
@@ -200,6 +224,18 @@ def analyze():
             roadmap=roadmap
         )
         db.session.add(new_analysis)
+        db.session.commit()
+
+        for i, week_content in enumerate(weeks):
+            week_match = re.match(r'Week\s*(\d+)', week_content)
+            label = f"Week {week_match.group(1)}" if week_match else f"Part {i+1}"
+            task = RoadmapTask(
+                analysis_id=new_analysis.id,
+                week_label=label,
+                content=markdown.markdown(week_content),
+                completed=False
+            )
+            db.session.add(task)
         db.session.commit()
 
     return render_template(
@@ -215,6 +251,18 @@ def analyze():
         roadmap=roadmap_html,
         match_percentage=match_percentage
     )
+
+
+@app.route('/toggle-task/<int:task_id>', methods=['POST'])
+@login_required
+def toggle_task(task_id):
+    task = RoadmapTask.query.get_or_404(task_id)
+    analysis = Analysis.query.get(task.analysis_id)
+    if analysis.user_id != current_user.id:
+        return jsonify({"error": "unauthorized"}), 403
+    task.completed = not task.completed
+    db.session.commit()
+    return jsonify({"completed": task.completed})
 
 
 @app.route('/tailor-resume', methods=['GET', 'POST'])
