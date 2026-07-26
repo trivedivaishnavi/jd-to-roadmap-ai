@@ -290,8 +290,29 @@ def tailor_resume():
 @login_required
 def history():
     analyses = Analysis.query.filter_by(user_id=current_user.id).order_by(Analysis.created_at.desc()).all()
-    return render_template('history.html', analyses=analyses)
 
+    total_analyses = len(analyses)
+    all_tasks = [task for a in analyses for task in a.tasks]
+    total_tasks = len(all_tasks)
+    completed_tasks = len([t for t in all_tasks if t.completed])
+    completion_pct = round((completed_tasks / total_tasks) * 100) if total_tasks else 0
+
+    all_missing = []
+    for a in analyses:
+        if a.missing_skills:
+            all_missing.extend([s.strip() for s in a.missing_skills.split(",") if s.strip()])
+    top_missing = Counter(all_missing).most_common(1)
+    top_skill = top_missing[0][0] if top_missing else "None yet"
+
+    return render_template(
+        'history.html',
+        analyses=analyses,
+        total_analyses=total_analyses,
+        total_tasks=total_tasks,
+        completed_tasks=completed_tasks,
+        completion_pct=completion_pct,
+        top_skill=top_skill
+    )
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
